@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { LayoutDashboard, Receipt, PieChart, Wallet, LogOut, Plus } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Expenses from './components/Expenses';
+import Categories from './components/Categories';
+import Login from './components/Login';
+import { getLoggedInUser, setLoggedInUser } from './store';
 
-function AppContent() {
+function AppContent({ user, onLogout }) {
   const location = useLocation();
 
   return (
@@ -24,6 +27,7 @@ function AppContent() {
             <Wallet size={28} color="var(--accent-primary)" />
             FinancaIme
           </h1>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>Përshëndetje, {user?.name}</p>
         </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
@@ -33,7 +37,7 @@ function AppContent() {
         </nav>
 
         <div style={{ marginTop: 'auto' }}>
-          <button className="btn" style={{ width: '100%', justifyContent: 'flex-start', color: 'var(--text-secondary)', background: 'transparent' }}>
+          <button className="btn" onClick={onLogout} style={{ width: '100%', justifyContent: 'flex-start', color: 'var(--text-secondary)', background: 'transparent' }}>
             <LogOut size={20} /> Dil nga llogaria
           </button>
         </div>
@@ -44,7 +48,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/expenses" element={<Expenses />} />
-          <Route path="/categories" element={<div className="glass-panel"><h2>Kategoritë (Në Zhvillim)</h2><p>Këtu do të menaxhohen kategoritë.</p></div>} />
+          <Route path="/categories" element={<Categories />} />
         </Routes>
       </main>
     </div>
@@ -60,11 +64,11 @@ function NavItem({ to, icon, label, active }) {
       padding: '0.75rem 1rem',
       borderRadius: '8px',
       color: active ? 'white' : 'var(--text-secondary)',
-      background: active ? 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))' : 'transparent',
+      background: active ? 'var(--accent-primary)' : 'transparent',
       textDecoration: 'none',
       fontWeight: 500,
       transition: 'all 0.2s',
-      boxShadow: active ? '0 4px 15px rgba(59, 130, 246, 0.2)' : 'none'
+      boxShadow: active ? '0 4px 6px -1px rgba(59, 130, 246, 0.2)' : 'none'
     }}>
       {icon}
       {label}
@@ -73,9 +77,20 @@ function NavItem({ to, icon, label, active }) {
 }
 
 function App() {
+  const [user, setUser] = useState(getLoggedInUser());
+
+  if (!user) {
+    return <Login onLogin={setUser} />;
+  }
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
+    setUser(null);
+  };
+
   return (
     <Router>
-      <AppContent />
+      <AppContent user={user} onLogout={handleLogout} />
     </Router>
   );
 }

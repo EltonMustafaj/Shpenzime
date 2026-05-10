@@ -16,9 +16,16 @@ function Expenses() {
     date: new Date().toISOString().split('T')[0]
   });
 
-  const loadData = () => {
-    setExpenses(getExpenses());
-    setCategories(getCategories().filter(c => c.type === 'expense'));
+  const loadData = async () => {
+    const exp = await getExpenses();
+    const mappedExp = exp.map(e => ({
+      ...e,
+      date: e.expense_date
+    }));
+    setExpenses(mappedExp);
+    
+    const cat = await getCategories();
+    setCategories(cat.filter(c => c.type === 'expense'));
   };
 
   useEffect(() => {
@@ -51,20 +58,20 @@ function Expenses() {
     setEditingId(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (editingId) {
-      updateExpense(editingId, { ...formData, amount: parseFloat(formData.amount) });
+      await updateExpense(editingId, { ...formData, amount: parseFloat(formData.amount) });
     } else {
-      addExpense({ ...formData, amount: parseFloat(formData.amount) });
+      await addExpense({ ...formData, amount: parseFloat(formData.amount) });
     }
     loadData();
     handleCloseModal();
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('A jeni të sigurt që dëshironi ta fshini këtë shpenzim?')) {
-      deleteExpense(id);
+      await deleteExpense(id);
       loadData();
     }
   };
@@ -188,7 +195,7 @@ function Expenses() {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                <button type="button" className="btn" style={{ flex: 1, background: 'rgba(255,255,255,0.1)' }} onClick={handleCloseModal}>Anulo</button>
+                <button type="button" className="btn" style={{ flex: 1, background: '#f1f5f9', color: 'var(--text-secondary)' }} onClick={handleCloseModal}>Anulo</button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>{editingId ? 'Ruaj Ndryshimet' : 'Ruaj'}</button>
               </div>
             </form>
