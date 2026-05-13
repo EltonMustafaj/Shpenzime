@@ -54,9 +54,9 @@ function Dashboard() {
             <Wallet size={24} color="var(--accent-primary)" />
           </div>
           <div style={{ fontSize: '2rem', fontWeight: 700 }}>{balance.toFixed(2)} €</div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--success)', display: 'flex', alignItems: 'center' }}>
+          {/* <div style={{ fontSize: '0.85rem', color: 'var(--success)', display: 'flex', alignItems: 'center' }}>
             <ArrowUpRight size={16} /> +12% nga muaji i kaluar
-          </div>
+          </div> */}
         </div>
 
         <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
